@@ -103,10 +103,14 @@
 
 ;; let user choose these from lingva-languages
 (defcustom lingva-source "fr"
-  "The default language to translate from.")
+  "The default language to translate from, as a two letter code.
+For details of what languages are availble and their
+corresponding codes, see `lingva-languages'.")
 
 (defcustom lingva-target "en"
-  "The default language to translate to.")
+  "The default language to translate to, as a two letter code.
+For details of what languages are availble and their
+corresponding codes, see `lingva-languages'.")
 
 (defvar lingva-search-url
   (concat lingva-instance "/api/v1/" lingva-source "/" lingva-target "/")
@@ -117,8 +121,6 @@
   "The URL for a lingva source and target languages list query.")
 
 ;; if don't want hard-coded linva-languages list, ask the server:
-;; returns an annoying json tho, not an alist
-
 ;; (defun lingva-get-languages ()
 ;;   (let* ((url-request-method "GET")
 ;;          (response-buffer (url-retrieve-synchronously
