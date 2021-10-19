@@ -129,6 +129,7 @@
 ;;             (search-forward "\n\n")
 ;;             (json-read)))))
 
+;;;###autoload
 (defun lingva-translate (text &optional arg)
   "Prompt for TEXT to translate and return the translation in a buffer.
 With a single prefix ARG, prompt to specify a source
