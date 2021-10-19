@@ -1,0 +1,7 @@
+* lingva.el
+
+This is a basic Emacs interface for the [[https://lingva.ml][lingva.ml]] API, which allows you to obtain translations of texts from Google translate without any tracking.
+
+The entry point is =lingva-translate=, which will translate between =lingva-source= and =lingva-target= by default. Called with a single prefix argument, it will prompt the user for a source language. Called with two prefix arguments, it prompts for both a source and a target language.
+
+To choose which instance to interact with, customize =lingva-instance=. It might be a good idea to switch it to something other than the official one (list available here: [[https://github.com/TheDavidDelta/lingva-translate#instances][lingva-translate instances]]).
