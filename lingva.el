@@ -26,8 +26,19 @@
 
 ;;; Code:
 
+(require 'json)
+
+(defvar url-http-end-of-headers)
+(defvar url-request-method)
+
+(defgroup lingva nil
+  "Interact with Linva.ml instances."
+  :prefix "linvga"
+  :group 'external)
+
 (defcustom lingva-instance "https://lingva.ml"
-  "The lingva instance to use.")
+  "The lingva instance to use."
+  :type 'string)
 
 (defvar lingva-languages
   '(("bn" . "Bengali")
@@ -98,19 +109,21 @@
    ("pl" . "Polish")
    ("pt" . "Portuguese")
    ("zu" . "Zulu"))
-  "The list of languages to choose from as either source or
-  target for a lingva query.")
+  "The list of languages to choose from.
+Can be used for either source or target for a lingva query.")
 
 ;; let user choose these from lingva-languages
 (defcustom lingva-source "fr"
   "The default language to translate from, as a two letter code.
 For details of what languages are availble and their
-corresponding codes, see `lingva-languages'.")
+corresponding codes, see `lingva-languages'."
+  :type 'string)
 
 (defcustom lingva-target "en"
   "The default language to translate to, as a two letter code.
 For details of what languages are availble and their
-corresponding codes, see `lingva-languages'.")
+corresponding codes, see `lingva-languages'."
+  :type 'string)
 
 (defvar lingva-search-url
   (concat lingva-instance "/api/v1/" lingva-source "/" lingva-target "/")
@@ -120,7 +133,8 @@ corresponding codes, see `lingva-languages'.")
   (concat lingva-instance "/api/v1/languages")
   "The URL for a lingva source and target languages list query.")
 
-;; if don't want hard-coded linva-languages list, ask the server:
+;; if don't want hard-coded linva-languages list, ask the server
+;; then make a list:
 ;; (defun lingva-get-languages ()
 ;;   (let* ((url-request-method "GET")
 ;;          (response-buffer (url-retrieve-synchronously
@@ -160,20 +174,41 @@ different to `lingva-target'."
                            (concat lingva-instance "/api/v1/"
                                    lingva-source "/"
                                    lingva-target "/"
-                                   text)))
-         (json
-          (with-current-buffer response-buffer
-            (set-buffer-multibyte t)
-            (goto-char url-http-end-of-headers)
-            (json-read))))
-    (with-current-buffer (get-buffer-create "*lingva*")
-      (let ((inhibit-read-only t))
-        (special-mode)
-        (delete-region (point-min) (point-max))
-        (insert (cdar json))
-        (kill-new (cdar json))
-        (message "Translation copied to clipboard.")
-        (display-buffer (current-buffer))))))
+                                   (url-hexify-string text)))))
+    (with-current-buffer response-buffer
+      (if (not (string-prefix-p "2" (lingva--status)))
+          (switch-to-buffer response-buffer)
+        (let ((json (progn
+                      (set-buffer-multibyte t)
+                      (goto-char url-http-end-of-headers)
+                      (json-read))))
+          (with-current-buffer (get-buffer-create "*lingva*")
+            (let ((inhibit-read-only t))
+              (special-mode)
+              (delete-region (point-min) (point-max))
+              (insert (cdar json))
+              (kill-new (cdar json))
+              (message "Translation copied to clipboard.")
+              (display-buffer (current-buffer)))))))))
+
+;; process the http response:
+
+(defun lingva--response ()
+  "Capture response buffer content as string."
+  (with-current-buffer (current-buffer)
+    (buffer-substring-no-properties (point-min) (point-max))))
+
+(defun lingva--response-body (pattern)
+  "Return substring matching PATTERN from `lingva--response'."
+  (let ((resp (lingva--response)))
+    (string-match pattern resp)
+    (match-string 0 resp)))
+
+(defun lingva--status ()
+  "Return HTTP Response Status Code from `lingva--response'."
+  (let* ((status-line (lingva--response-body "^HTTP/1.*$")))
+    (string-match "[0-9][0-9][0-9]" status-line)
+    (match-string 0 status-line)))
 
 (provide 'lingva)
 ;;; lingva.el ends here
