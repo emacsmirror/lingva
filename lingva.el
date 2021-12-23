@@ -154,7 +154,8 @@ With a second prefix ARG, prompto to specify both a source
 language different to `lingva-source' and a target language
 different to `lingva-target'."
   (interactive "sText to translate: \nP")
-  (let* ((url-request-method "GET")
+  (let* ((query (url-hexify-string text))
+         (url-request-method "GET")
          (lingva-languages (mapcar (lambda (x)
                                      (cons (cdr x) (car x)))
                                    lingva-languages))
@@ -174,7 +175,7 @@ different to `lingva-target'."
                            (concat lingva-instance "/api/v1/"
                                    lingva-source "/"
                                    lingva-target "/"
-                                   (url-hexify-string text)))))
+                                   query))))
     (with-current-buffer response-buffer
       (if (not (string-prefix-p "2" (lingva--status)))
           (switch-to-buffer response-buffer)
