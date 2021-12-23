@@ -1,8 +1,8 @@
 ;;; lingva.el --- access google translate via lingva.ml  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021  mouse
+;; Copyright (C) 2021 marty hiatt
 
-;; Author: mouse <mousebot@riseup.net>
+;; Author: marty hiatt <martianhiatus@riseup.net>
 ;; Keywords: convenience, translation
 
 ;; This file is not part of GNU Emacs.
