@@ -3,6 +3,7 @@
 ;; Copyright (C) 2021 marty hiatt
 
 ;; Author: marty hiatt <martianhiatus@riseup.net>
+;; Website: https://codeberg.org/martianh/lingva.el
 ;; Keywords: convenience, translation
 
 ;; This file is not part of GNU Emacs.
