@@ -2,6 +2,10 @@
 
 This is a basic Emacs interface for the [[https://lingva.ml][lingva.ml]] API, which allows you to obtain translations of texts from Google translate without any tracking.
 
-The entry point is =lingva-translate=, which will translate between =lingva-source= and =lingva-target= by default. Called with a single prefix argument, it will prompt the user for a source language. Called with two prefix arguments, it prompts for both a source and a target language.
+The entry point is =lingva-translate=, which will translate between =lingva-source= and =lingva-target= by default. The text to be translated is, in order, ether the region if active, or else the word at point, or else what the user inputs.
 
-To choose which instance to interact with, customize =lingva-instance=. It might be a good idea to switch it to something other than the official one (list available here: [[https://github.com/TheDavidDelta/lingva-translate#instances][lingva-translate instances]]).
+Called with a single prefix argument, it will prompt the user for a source language. Called with two prefix arguments, it prompts for both a source and a target language. The default source language is to auto-detect. You can customize the values of both =lingva-source= and =lingva-target=.
+
+To choose which instance to interact with, customize =lingva-instance=. It might be a good idea to switch it to something other than the official one if it gets overwhelmed (list available here: [[https://github.com/TheDavidDelta/lingva-translate#instances][lingva-translate instances]]).
+
+For now the list of supported languages is what is returned by the official [[https://lingva.ml][lingva.ml]] API. It can be obtained/updated  by running =lingva-return-langs-as-list=. 
