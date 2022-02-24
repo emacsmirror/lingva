@@ -156,7 +156,7 @@
 Can be used for either source or target for a lingva query.")
 
 ;; let user choose these from lingva-languages
-(defcustom lingva-source "fr"
+(defcustom lingva-source "auto"
   "The default language to translate from, as a two letter code.
 For details of what languages are availble and their
 corresponding codes, see `lingva-languages'."
