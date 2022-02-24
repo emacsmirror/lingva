@@ -178,15 +178,26 @@ corresponding codes, see `lingva-languages'."
 
 ;; if don't want hard-coded linva-languages list, ask the server
 ;; then make a list:
-;; (defun lingva-get-languages ()
-;;   (let* ((url-request-method "GET")
-;;          (response-buffer (url-retrieve-synchronously
-;;                            lingva-languages-url)))
-;;     (setq lingva-languages
-;;           (with-current-buffer response-buffer
-;;             (goto-char (point-min))
-;;             (search-forward "\n\n")
-;;             (json-read)))))
+(defun lingva-get-languages ()
+  "Return the languages supported by the server."
+  (let* ((url-request-method "GET")
+         (response-buffer (url-retrieve-synchronously
+                           lingva-languages-url)))
+    (setq lingva-languages
+          (with-current-buffer response-buffer
+            (goto-char (point-min))
+            (search-forward "\n\n")
+            (json-read)))))
+
+(defun lingva-return-langs-as-list ()
+  "Return a list of cons cells containing languages supported by the server."
+  (let* ((lingva-langs-response (lingva-get-languages))
+         (langs-response-vector (cdar lingva-langs-response))
+         (langs-response-list (append langs-response-vector nil)))
+    (mapcar (lambda (x)
+              (cons (cdar x)
+                    (cdadr x)))
+            langs-response-list)))
 
 ;;;###autoload
 (defun lingva-translate (text &optional arg)
