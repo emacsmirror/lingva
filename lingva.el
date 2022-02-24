@@ -200,16 +200,16 @@ corresponding codes, see `lingva-languages'."
             langs-response-list)))
 
 ;;;###autoload
-(defun lingva-translate (text &optional arg)
+(defun lingva-translate (&optional arg)
   "Prompt for TEXT to translate and return the translation in a buffer.
-With a single prefix ARG, prompt to specify a source
-language different to `lingva-source'.
-With a second prefix ARG, prompto to specify both a source
-language different to `lingva-source' and a target language
-different to `lingva-target'."
-  (interactive "sText to translate: \nP")
-  (let* ((query (url-hexify-string text))
-         (url-request-method "GET")
+By default, in order, text is the current region, or current
+word, or user input. With a single prefix ARG, prompt to specify
+a source language different to `lingva-source'. With a second
+prefix ARG, promp to to specify both a source language different
+to `lingva-source' and a target language different to
+`lingva-target'."
+  (interactive "P")
+  (let* ((url-request-method "GET")
          (lingva-languages (mapcar (lambda (x)
                                      (cons (cdr x) (car x)))
                                    lingva-languages))
@@ -225,6 +225,12 @@ different to `lingva-target'."
                                                     lingva-languages)))
                               (cdr (assoc response lingva-languages)))
                           lingva-target))
+         (region (when (use-region-p)
+                   (buffer-substring-no-properties (region-beginning) (region-end))))
+         (text
+          (read-string (format "Translate (%s): " (or region (current-word) ""))
+                       nil nil (or region (current-word))))
+         (query (url-hexify-string text))
          (response-buffer (url-retrieve-synchronously
                            (concat lingva-instance "/api/v1/"
                                    lingva-source "/"
