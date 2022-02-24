@@ -233,6 +233,7 @@ to `lingva-source' and a target language different to
          (text
           (read-string (format "Translate (%s): " (or region (current-word) ""))
                        nil nil (or region (current-word))))
+         (text (replace-regexp-in-string "/" "|" text))
          (query (url-hexify-string text))
          (response-buffer (url-retrieve-synchronously
                            (concat lingva-instance "/api/v1/"
@@ -242,16 +243,17 @@ to `lingva-source' and a target language different to
     (with-current-buffer response-buffer
       (if (not (string-prefix-p "2" (lingva--status)))
           (switch-to-buffer response-buffer)
-        (let ((json (progn
-                      (set-buffer-multibyte t)
-                      (goto-char url-http-end-of-headers)
-                      (json-read))))
+        (let* ((json-raw (progn
+                           (set-buffer-multibyte t)
+                           (goto-char url-http-end-of-headers)
+                           (json-read)))
+               (json (replace-regexp-in-string "|" "/" (cdar json-raw))))
           (with-current-buffer (get-buffer-create "*lingva*")
             (let ((inhibit-read-only t))
               (special-mode)
               (delete-region (point-min) (point-max))
-              (insert (cdar json))
-              (kill-new (cdar json))
+              (insert json)
+              (kill-new json)
               (message "Translation copied to clipboard.")
               (display-buffer (current-buffer)))))))))
 
