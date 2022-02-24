@@ -176,18 +176,15 @@ Can be used for either source or target for a lingva query.")
   (concat lingva-instance "/api/v1/languages")
   "The URL for a lingva source and target languages list query.")
 
-;; if don't want hard-coded linva-languages list, ask the server
-;; then make a list:
 (defun lingva-get-languages ()
   "Return the languages supported by the server."
   (let* ((url-request-method "GET")
          (response-buffer (url-retrieve-synchronously
                            lingva-languages-url)))
-    (setq lingva-languages
-          (with-current-buffer response-buffer
-            (goto-char (point-min))
-            (search-forward "\n\n")
-            (json-read)))))
+    (with-current-buffer response-buffer
+      (goto-char (point-min))
+      (search-forward "\n\n")
+      (json-read))))
 
 (defun lingva-return-langs-as-list ()
   "Return a list of cons cells containing languages supported by the server."
@@ -198,6 +195,11 @@ Can be used for either source or target for a lingva query.")
               (cons (cdar x)
                     (cdadr x)))
             langs-response-list)))
+
+(defun lingva-update-lingva-languages ()
+  "Set `lingva-languages' to the data returned by the server."
+  (interactive)
+  (setq lingva-languages (lingva-return-langs-as-list)))
 
 ;;;###autoload
 (defun lingva-translate (&optional arg)
