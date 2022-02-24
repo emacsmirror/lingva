@@ -40,6 +40,19 @@
   "The lingva instance to use."
   :type 'string)
 
+;; let user choose these from lingva-languages
+(defcustom lingva-source "auto"
+  "The default language to translate from, as a two letter code.
+For details of what languages are availble and their
+corresponding codes, see `lingva-languages'."
+  :type 'string)
+
+(defcustom lingva-target "en"
+  "The default language to translate to, as a two letter code.
+For details of what languages are availble and their
+corresponding codes, see `lingva-languages'."
+  :type 'string)
+
 ;; this can be updated by running `lingva-return-langs-as-list'
 (defvar lingva-languages
   '(("auto" . "Detect")
@@ -154,19 +167,6 @@
     ("zu" . "Zulu"))
   "The list of languages to choose from.
 Can be used for either source or target for a lingva query.")
-
-;; let user choose these from lingva-languages
-(defcustom lingva-source "auto"
-  "The default language to translate from, as a two letter code.
-For details of what languages are availble and their
-corresponding codes, see `lingva-languages'."
-  :type 'string)
-
-(defcustom lingva-target "en"
-  "The default language to translate to, as a two letter code.
-For details of what languages are availble and their
-corresponding codes, see `lingva-languages'."
-  :type 'string)
 
 (defvar lingva-search-url
   (concat lingva-instance "/api/v1/" lingva-source "/" lingva-target "/")
