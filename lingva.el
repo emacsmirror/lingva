@@ -255,7 +255,7 @@ to `lingva-source' and a target language different to
               (insert json)
               (kill-new json)
               (message "Translation copied to clipboard.")
-              (display-buffer (current-buffer)))))))))
+              (switch-to-buffer-other-window (current-buffer)))))))))
 
 ;; process the http response:
 
