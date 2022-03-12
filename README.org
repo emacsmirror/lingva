@@ -16,4 +16,4 @@ For now it is not on MELPA, to install, clone/download, add the directory to you
 
 ** similar projects
 
-There is a fully-featured Google Translate package for emacs: https://github.com/atykhonov/google-translate. This might be useful if you need to access more aspects of the API, as the lingva version is bare-bones and only returns the translated text. 
+There is a fully-featured Google Translate package for emacs: https://github.com/atykhonov/google-translate. There is also a translation framework that supports Google, Bing, and deepL: https://github.com/lorniu/go-translate. They might be useful if you need to access more aspects of the API, as the lingva version is bare-bones and only returns the translated text. 
