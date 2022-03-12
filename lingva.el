@@ -237,28 +237,43 @@ language different to `lingva-target'."
               (read-string (format "Translate (%s): " (or region (current-word) ""))
                            nil nil (or region (current-word)))))
          (text (replace-regexp-in-string "/" "|" text))
-         (query (url-hexify-string text))
-         (response-buffer (url-retrieve-synchronously
-                           (concat lingva-instance "/api/v1/"
-                                   lingva-source "/"
-                                   lingva-target "/"
-                                   query))))
-    (with-current-buffer response-buffer
-      (if (not (string-prefix-p "2" (lingva--status)))
-          (switch-to-buffer response-buffer)
-        (let* ((json-raw (progn
-                           (set-buffer-multibyte t)
-                           (goto-char url-http-end-of-headers)
-                           (json-read)))
-               (json (replace-regexp-in-string "|" "/" (cdar json-raw))))
-          (with-current-buffer (get-buffer-create "*lingva*")
-            (let ((inhibit-read-only t))
-              (special-mode)
-              (delete-region (point-min) (point-max))
-              (insert json)
-              (kill-new json)
-              (message "Translation copied to clipboard.")
-              (switch-to-buffer-other-window (current-buffer)))))))))
+         (query (url-hexify-string text)))
+    (url-retrieve
+     (concat lingva-instance "/api/v1/"
+             lingva-source "/"
+             lingva-target "/"
+             query)
+     (lambda (status)
+       (apply #'lingva-translate-callback
+              (lingva-translate-process-json))))))
+
+(defun lingva-translate-callback (json)
+  "Display the translation returned in JSON in a buffer."
+  (with-current-buffer (get-buffer-create
+                        (concat "*lingva-"
+                                lingva-source
+                                "-"
+                                lingva-target
+                                "*"))
+    (let ((inhibit-read-only t)
+          (json-processed
+           (replace-regexp-in-string "|" "/" (cdr json))))
+      (special-mode)
+      (delete-region (point-min) (point-max))
+      (insert json-processed)
+      (kill-new json-processed)
+      (message "Translation copied to clipboard.")
+      (switch-to-buffer-other-window (current-buffer)))))
+
+(defun lingva-translate-process-json ()
+  "Parse the JSON from the HTTP response."
+  (goto-char (point-min))
+  (re-search-forward "^$" nil 'move)
+  (let ((json-string
+         (decode-coding-string
+          (buffer-substring-no-properties (point) (point-max))
+          'utf-8)))
+    (json-read-from-string json-string)))
 
 ;; process the http response:
 
