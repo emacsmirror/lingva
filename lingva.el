@@ -205,14 +205,14 @@ Can be used for either source or target for a lingva query.")
   (setq lingva-languages (lingva-return-langs-as-list)))
 
 ;;;###autoload
-(defun lingva-translate (&optional arg)
+(defun lingva-translate (&optional arg text)
   "Prompt for TEXT to translate and return the translation in a buffer.
-By default, in order, text is the current region, or current
-word, or user input. With a single prefix ARG, prompt to specify
-a source language different to `lingva-source'. With a second
-prefix ARG, promp to to specify both a source language different
-to `lingva-source' and a target language different to
-`lingva-target'."
+By default, in order, text is given as a second argument, the
+current region, the word at point, or user input. With a single
+prefix ARG, prompt to specify a source language different to
+`lingva-source'. With a second prefix ARG, promp to to specify
+both a source language different to `lingva-source' and a target
+language different to `lingva-target'."
   (interactive "P")
   (let* ((url-request-method "GET")
          (lingva-languages (mapcar (lambda (x)
@@ -233,8 +233,9 @@ to `lingva-source' and a target language different to
          (region (when (use-region-p)
                    (buffer-substring-no-properties (region-beginning) (region-end))))
          (text
-          (read-string (format "Translate (%s): " (or region (current-word) ""))
-                       nil nil (or region (current-word))))
+          (or text
+              (read-string (format "Translate (%s): " (or region (current-word) ""))
+                           nil nil (or region (current-word)))))
          (text (replace-regexp-in-string "/" "|" text))
          (query (url-hexify-string text))
          (response-buffer (url-retrieve-synchronously
