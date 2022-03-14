@@ -35,7 +35,7 @@
 (defvar url-request-method)
 
 (defgroup lingva nil
-  "Interact with Linva.ml instances."
+  "Interact with Lingva.ml instances."
   :prefix "linvga"
   :group 'external)
 
