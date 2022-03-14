@@ -4,7 +4,7 @@
 
 ;; Author: marty hiatt <martianhiatus@riseup.net>
 ;; Homepage: https://codeberg.org/martianh/lingva.el
-;; Package-Requires: ((emacs "24.1"))
+;; Package-Requires: ((emacs "24.3"))
 ;; Version: 0.0.1
 ;; Keywords: convenience, translation
 
