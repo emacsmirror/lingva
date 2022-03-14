@@ -264,7 +264,8 @@ language different to `lingva-target'."
       (insert json-processed)
       (kill-new json-processed)
       (message "Translation copied to clipboard.")
-      (switch-to-buffer-other-window (current-buffer)))))
+      (switch-to-buffer-other-window (current-buffer))
+      (goto-char (point-min)))))
 
 (defun lingva-translate-process-json ()
   "Parse the JSON from the HTTP response."
