@@ -259,12 +259,18 @@ language different to `lingva-target'."
           (json-processed
            (replace-regexp-in-string "|" "/" (cdr json))))
       (special-mode)
-      (visual-line-mode)
       (delete-region (point-min) (point-max))
       (insert json-processed)
       (kill-new json-processed)
       (message "Translation copied to clipboard.")
       (switch-to-buffer-other-window (current-buffer))
+      (visual-line-mode)
+      (setq-local header-line-format
+                  (propertize
+                   (format "Lingva translation from %s to %s:"
+                           (cdr (assoc lingva-source lingva-languages))
+                           (cdr (assoc lingva-target lingva-languages)))
+                   'face font-lock-comment-face))
       (goto-char (point-min)))))
 
 (defun lingva-translate-process-json ()
