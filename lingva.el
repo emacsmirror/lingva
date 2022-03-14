@@ -259,6 +259,7 @@ language different to `lingva-target'."
           (json-processed
            (replace-regexp-in-string "|" "/" (cdr json))))
       (special-mode)
+      (visual-line-mode)
       (delete-region (point-min) (point-max))
       (insert json-processed)
       (kill-new json-processed)
