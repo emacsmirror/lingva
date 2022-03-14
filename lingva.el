@@ -205,7 +205,7 @@ Can be used for either source or target for a lingva query.")
   (setq lingva-languages (lingva-return-langs-as-list)))
 
 ;;;###autoload
-(defun lingva-translate (&optional arg text render)
+(defun lingva-translate (&optional arg text)
   "Prompt for TEXT to translate and return the translation in a buffer.
 By default, in order, text is given as a second argument, the
 current region, the word at point, or user input. With a single
@@ -243,12 +243,11 @@ language different to `lingva-target'."
              lingva-source "/"
              lingva-target "/"
              query)
-     (lambda (_status)
+     (lambda (status)
        (apply #'lingva-translate-callback
-              `(,(lingva-translate-process-json)
-                ,render))))))
+              (lingva-translate-process-json))))))
 
-(defun lingva-translate-callback (json &optional render)
+(defun lingva-translate-callback (json)
   "Display the translation returned in JSON in a buffer."
   (with-current-buffer (get-buffer-create
                         (concat "*lingva-"
@@ -258,17 +257,10 @@ language different to `lingva-target'."
                                 "*"))
     (let ((inhibit-read-only t)
           (json-processed
-           (replace-regexp-in-string "|" "/" (cdar json))))
+           (replace-regexp-in-string "|" "/" (cdr json))))
       (special-mode)
-      (erase-buffer)
-      (if render
-          (insert
-           (with-temp-buffer
-             (insert json-processed)
-             (shr-render-region (point-min) (point-max))
-             (buffer-string)))
-           ;; (mastodon-tl--render-text
-        (insert json-processed))
+      (delete-region (point-min) (point-max))
+      (insert json-processed)
       (kill-new json-processed)
       (message "Translation copied to clipboard.")
       (switch-to-buffer-other-window (current-buffer))
