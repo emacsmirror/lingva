@@ -31,6 +31,9 @@
 
 (require 'json)
 
+(when (require 'pdf-tools nil :no-error)
+  (declare-function pdf-view-active-region-text "pdf-view"))
+
 (defvar url-http-end-of-headers)
 (defvar url-request-method)
 
@@ -230,8 +233,11 @@ language different to `lingva-target'."
                                                     lingva-languages)))
                               (cdr (assoc response lingva-languages)))
                           lingva-target))
-         (region (when (use-region-p)
-                   (buffer-substring-no-properties (region-beginning) (region-end))))
+         (region (if (equal major-mode 'pdf-view-mode)
+                     (when (region-active-p)
+                       (pdf-view-active-region-text))
+                   (when (use-region-p)
+                     (buffer-substring-no-properties (region-beginning) (region-end)))))
          (text
           (or text
               (read-string (format "Translate (%s): " (or region (current-word) ""))
@@ -243,7 +249,7 @@ language different to `lingva-target'."
              lingva-source "/"
              lingva-target "/"
              query)
-     (lambda (status)
+     (lambda (_status)
        (apply #'lingva-translate-callback
               (lingva-translate-process-json))))))
 
