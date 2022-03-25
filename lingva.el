@@ -208,7 +208,7 @@ Can be used for either source or target for a lingva query.")
   (setq lingva-languages (lingva-return-langs-as-list)))
 
 ;;;###autoload
-(defun lingva-translate (&optional arg text)
+(defun lingva-translate (&optional arg text variable-pitch)
   "Prompt for TEXT to translate and return the translation in a buffer.
 By default, in order, text is given as a second argument, the
 current region, the word at point, or user input. With a single
@@ -251,9 +251,10 @@ language different to `lingva-target'."
              query)
      (lambda (_status)
        (apply #'lingva-translate-callback
-              (lingva-translate-process-json))))))
+              (lingva-translate-process-json)
+              '(variable-pitch))))))
 
-(defun lingva-translate-callback (json)
+(defun lingva-translate-callback (json &optional variable-pitch)
   "Display the translation returned in JSON in a buffer."
   (with-current-buffer (get-buffer-create
                         (concat "*lingva-"
@@ -263,7 +264,7 @@ language different to `lingva-target'."
                                 "*"))
     (let ((inhibit-read-only t)
           (json-processed
-           (replace-regexp-in-string "|" "/" (cdr json))))
+           (replace-regexp-in-string "|" "/" (alist-get 'translation json))))
       (special-mode)
       (delete-region (point-min) (point-max))
       (insert json-processed)
@@ -271,6 +272,9 @@ language different to `lingva-target'."
       (message "Translation copied to clipboard.")
       (switch-to-buffer-other-window (current-buffer))
       (visual-line-mode)
+      ;; handle borked filling:
+      (when variable-pitch
+        (variable-pitch-mode 1))
       (setq-local header-line-format
                   (propertize
                    (format "Lingva translation from %s to %s:"
