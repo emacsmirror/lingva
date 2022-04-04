@@ -184,7 +184,7 @@ Can be used for either source or target for a lingva query.
   (concat lingva-instance "/api/v1/languages")
   "The URL for a lingva source and target languages list query.")
 
-(defun lingva-get-languages ()
+(defun lingva--get-languages ()
   "Return the languages supported by the server."
   (let* ((url-request-method "GET")
          (response-buffer (url-retrieve-synchronously
@@ -194,9 +194,9 @@ Can be used for either source or target for a lingva query.
       (search-forward "\n\n")
       (json-read))))
 
-(defun lingva-return-langs-as-list ()
+(defun lingva--return-langs-as-list ()
   "Return a list of cons cells containing languages supported by the server."
-  (let* ((lingva-langs-response (lingva-get-languages))
+  (let* ((lingva-langs-response (lingva--get-languages))
          (langs-response-vector (cdar lingva-langs-response))
          (langs-response-list (append langs-response-vector nil)))
     (mapcar (lambda (x)
@@ -207,7 +207,24 @@ Can be used for either source or target for a lingva query.
 (defun lingva-update-lingva-languages ()
   "Set `lingva-languages' to the data returned by the server."
   (interactive)
-  (setq lingva-languages (lingva-return-langs-as-list)))
+  (setq lingva-languages (lingva--return-langs-as-list)))
+
+(defun lingva--get-query-region ()
+  "Get current region for default search."
+  (if (equal major-mode 'pdf-view-mode)
+      (when (region-active-p)
+        (pdf-view-active-region-text))
+    (when (use-region-p)
+      (buffer-substring-no-properties (region-beginning) (region-end)))))
+
+(defun lingva--get-text-query (text region)
+  "Get the text query to send.
+\nEither from TEXT, or REGION, or current word, or user input."
+  (replace-regexp-in-string
+   "/" "|"
+   (or text
+       (read-string (format "Translate (%s): " (or region (current-word) ""))
+                    nil nil (or region (current-word))))))
 
 ;;;###autoload
 (defun lingva-translate (&optional arg text variable-pitch)
@@ -235,16 +252,9 @@ language different to `lingva-target'."
                                                     lingva-languages)))
                               (cdr (assoc response lingva-languages)))
                           lingva-target))
-         (region (if (equal major-mode 'pdf-view-mode)
-                     (when (region-active-p)
-                       (pdf-view-active-region-text))
-                   (when (use-region-p)
-                     (buffer-substring-no-properties (region-beginning) (region-end)))))
-         (text
-          (or text
-              (read-string (format "Translate (%s): " (or region (current-word) ""))
-                           nil nil (or region (current-word)))))
-         (text (replace-regexp-in-string "/" "|" text))
+         (region (lingva--get-query-region))
+         (text (lingva--get-text-query text region))
+         ;; (text (replace-regexp-in-string "/" "|" text))
          (query (url-hexify-string text)))
     (url-retrieve
      (concat lingva-instance "/api/v1/"
@@ -286,7 +296,7 @@ language different to `lingva-target'."
                    'face font-lock-comment-face))
       (goto-char (point-min)))))
 
-(defun lingva-translate-process-json ()
+(defun lingva--translate-process-json ()
   "Parse the JSON from the HTTP response."
   (goto-char (point-min))
   (re-search-forward "^$" nil 'move)
