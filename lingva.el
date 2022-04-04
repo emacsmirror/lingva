@@ -4,7 +4,7 @@
 
 ;; Author: marty hiatt <martianhiatus@riseup.net>
 ;; Homepage: https://codeberg.org/martianh/lingva.el
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "25.1"))
 ;; Version: 0.0.1
 ;; Keywords: convenience, translation
 
@@ -25,7 +25,9 @@
 
 ;;; Commentary:
 
-;; Interact with the Lingva.ml API from within Emacs.
+;; Interact with the Lingva.ml API from within Emacs. Lingva.ml provides
+;; access to Google Translate with no tracking, like Invidious does for
+;; YouTube.
 
 ;;; Code:
 
@@ -59,7 +61,6 @@ For details of what languages are availble and their
 corresponding codes, see `lingva-languages'."
   :type 'string)
 
-;; this can be updated by running `lingva-return-langs-as-list'
 (defvar lingva-languages
   '(("auto" . "Detect")
     ("af" . "Afrikaans")
@@ -172,7 +173,8 @@ corresponding codes, see `lingva-languages'."
     ("yo" . "Yoruba")
     ("zu" . "Zulu"))
   "The list of languages to choose from.
-Can be used for either source or target for a lingva query.")
+Can be used for either source or target for a lingva query.
+\n Can be updated by running `lingva-update-lingva-languages'.")
 
 (defvar lingva-search-url
   (concat lingva-instance "/api/v1/" lingva-source "/" lingva-target "/")
@@ -255,7 +257,8 @@ language different to `lingva-target'."
               '(variable-pitch))))))
 
 (defun lingva-translate-callback (json &optional variable-pitch)
-  "Display the translation returned in JSON in a buffer."
+  "Display the translation returned in JSON in a buffer.
+\nWhen VARIABLE-PITCH is non-nil, active `variable-pitch-mode'."
   (with-current-buffer (get-buffer-create
                         (concat "*lingva-"
                                 lingva-source
@@ -314,4 +317,3 @@ language different to `lingva-target'."
 
 (provide 'lingva)
 ;;; lingva.el ends here
-
