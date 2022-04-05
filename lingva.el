@@ -176,10 +176,6 @@ corresponding codes, see `lingva-languages'."
 Can be used for either source or target for a lingva query.
 \n Can be updated by running `lingva-update-lingva-languages'.")
 
-(defvar lingva-search-url
-  (concat lingva-instance "/api/v1/" lingva-source "/" lingva-target "/")
-  "The URL for a lingva query.")
-
 (defvar lingva-languages-url
   (concat lingva-instance "/api/v1/languages")
   "The URL for a lingva source and target languages list query.")
