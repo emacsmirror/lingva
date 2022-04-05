@@ -292,8 +292,8 @@ language different to `lingva-target'."
         (setq-local header-line-format
                     (propertize
                      (format "Lingva translation from %s to %s:"
-                             (cdr (assoc source lingva-languages))
-                             (cdr (assoc target lingva-languages)))
+                             (alist-get source lingva-languages nil nil #'equal)
+                             (alist-get target lingva-languages nil nil #'equal))
                      'face font-lock-comment-face))
         (goto-char (point-min))))))
 
