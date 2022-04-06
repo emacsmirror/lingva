@@ -219,18 +219,26 @@ Can be used for either source or target for a lingva query.
   (replace-regexp-in-string
    "/" "|"
    (or text
-       (read-string (format "Translate (%s): " (or region (current-word) ""))
-                    nil nil (or region (current-word))))))
+       (read-string
+        (format "Translate (%s): " (or region (current-word) ""))
+        nil nil (or region (current-word))))))
 
 (defun lingva--read-lang (source-or-target langs)
   "Read a language from list LANGS.
 \n SOURCE-OR-TARGET is whether the language selected is a source
 language or target language."
   (let ((response
-         (completing-read (format "%s language: " (upcase-initials
-                                                   (symbol-name source-or-target)))
+         (completing-read (format "%s language: "
+                                  (upcase-initials
+                                   (symbol-name source-or-target)))
                           langs)))
     (alist-get response langs nil nil #'equal)))
+
+(defun lingva--reverse-langs (langs)
+  "Reverse the alist of LANGS."
+  (mapcar (lambda (x)
+            (cons (cdr x) (car x)))
+          langs))
 
 ;;;###autoload
 (defun lingva-translate (&optional arg text variable-pitch)
@@ -243,15 +251,16 @@ both a source language different to `lingva-source' and a target
 language different to `lingva-target'."
   (interactive "P")
   (let* ((url-request-method "GET")
-         (lingva-langs-reversed (mapcar (lambda (x)
-                                          (cons (cdr x) (car x)))
-                                        lingva-languages))
-         (lingva-source-temp (if (and arg (>= (car arg) 4)) ; if 1 or 2 prefix args
-                                 (lingva--read-lang 'source lingva-langs-reversed)
-                               lingva-source))
-         (lingva-target-temp (if (equal arg '(16)) ; only if 2 prefix args
-                                 (lingva--read-lang 'target lingva-langs-reversed)
-                               lingva-target))
+         (lingva-langs-reversed
+          (lingva--reverse-langs lingva-languages))
+         (lingva-source-temp
+          (if (and arg (>= (car arg) 4)) ; if 1 or 2 prefix args
+              (lingva--read-lang 'source lingva-langs-reversed)
+            lingva-source))
+         (lingva-target-temp
+          (if (equal arg '(16))         ; only if 2 prefix args
+              (lingva--read-lang 'target lingva-langs-reversed)
+            lingva-target))
          (region (lingva--get-query-region))
          (text (lingva--get-text-query text region))
          (query (url-hexify-string text)))
@@ -261,24 +270,24 @@ language different to `lingva-target'."
              lingva-target-temp "/"
              query)
      (lambda (_status)
-       (apply #'lingva-translate-callback
+       (apply #'lingva--translate-callback
               (lingva--translate-process-json)
               `(,variable-pitch ,lingva-source-temp ,lingva-target-temp))))))
 
-(defun lingva-translate-callback (json &optional variable-pitch source target)
+(defun lingva--translate-callback (json &optional variable-pitch source target)
   "Display the translation returned in JSON in a buffer.
-\nWhen VARIABLE-PITCH is non-nil, active `variable-pitch-mode'. SOURCE and TARGET and the languages translated to and from."
+\nWhen VARIABLE-PITCH is non-nil, activate `variable-pitch-mode'.
+SOURCE and TARGET and the languages translated to and from."
   (if (equal 'error (caar json))
       (error "Error - %s" (alist-get 'error json))
     (with-current-buffer (get-buffer-create
                           (concat "*lingva-"
-                                  source
-                                  "-"
-                                  target
-                                  "*"))
+                                  source "-"
+                                  target "*"))
       (let ((inhibit-read-only t)
             (json-processed
-             (replace-regexp-in-string "|" "/" (alist-get 'translation json))))
+             (replace-regexp-in-string "|" "/" (alist-get
+                                                'translation json))))
         (special-mode)
         (delete-region (point-min) (point-max))
         (insert json-processed)
@@ -292,9 +301,12 @@ language different to `lingva-target'."
         (setq-local header-line-format
                     (propertize
                      (format "Lingva translation from %s to %s:"
-                             (alist-get source lingva-languages nil nil #'equal)
-                             (alist-get target lingva-languages nil nil #'equal))
-                     'face font-lock-comment-face))
+                             (alist-get source lingva-languages
+                                        nil nil #'equal)
+                             (alist-get target lingva-languages
+                                        nil nil #'equal))
+                     'face
+                     font-lock-comment-face))
         (goto-char (point-min))))))
 
 (defun lingva--translate-process-json ()
