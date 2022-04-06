@@ -184,7 +184,8 @@ Can be used for either source or target for a lingva query.
   "Return the languages supported by the server."
   (let* ((url-request-method "GET")
          (response-buffer (url-retrieve-synchronously
-                           lingva-languages-url)))
+                           lingva-languages-url t))
+         (json-array-type 'list))
     (with-current-buffer response-buffer
       (goto-char (point-min))
       (search-forward "\n\n")
@@ -193,12 +194,11 @@ Can be used for either source or target for a lingva query.
 (defun lingva--return-langs-as-list ()
   "Return a list of cons cells containing languages supported by the server."
   (let* ((lingva-langs-response (lingva--get-languages))
-         (langs-response-vector (cdar lingva-langs-response))
-         (langs-response-list (append langs-response-vector nil)))
+         (langs-response (cdar lingva-langs-response)))
     (mapcar (lambda (x)
               (cons (cdar x)
                     (cdadr x)))
-            langs-response-list)))
+            langs-response)))
 
 (defun lingva-update-lingva-languages ()
   "Set `lingva-languages' to the data returned by the server."
