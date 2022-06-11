@@ -289,7 +289,7 @@ SOURCE and TARGET and the languages translated to and from."
              (replace-regexp-in-string "|" "/" (alist-get
                                                 'translation json))))
         (special-mode)
-        (delete-region (point-min) (point-max))
+        (erase-buffer)
         (insert json-processed)
         (kill-new json-processed)
         (message "Translation copied to clipboard.")
