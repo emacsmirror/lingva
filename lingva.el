@@ -281,9 +281,7 @@ SOURCE and TARGET and the languages translated to and from."
   (if (equal 'error (caar json))
       (error "Error - %s" (alist-get 'error json))
     (with-current-buffer (get-buffer-create
-                          (concat "*lingva-"
-                                  source "-"
-                                  target "*"))
+                          (concat "*lingva-" source "-" target "*"))
       (let ((inhibit-read-only t)
             (json-processed
              (replace-regexp-in-string "|" "/" (alist-get
@@ -296,8 +294,7 @@ SOURCE and TARGET and the languages translated to and from."
         (switch-to-buffer-other-window (current-buffer))
         (visual-line-mode)
         ;; handle borked filling:
-        (when variable-pitch
-          (variable-pitch-mode 1))
+        (when variable-pitch (variable-pitch-mode 1))
         (setq-local header-line-format
                     (propertize
                      (format "Lingva translation from %s to %s:"
@@ -305,8 +302,7 @@ SOURCE and TARGET and the languages translated to and from."
                                         nil nil #'equal)
                              (alist-get target lingva-languages
                                         nil nil #'equal))
-                     'face
-                     font-lock-comment-face))
+                     'face font-lock-comment-face))
         (goto-char (point-min))))))
 
 (defun lingva--translate-process-json ()
