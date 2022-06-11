@@ -272,7 +272,7 @@ language different to `lingva-target'."
      (lambda (_status)
        (apply #'lingva--translate-callback
               (lingva--translate-process-json)
-              `(,variable-pitch ,lingva-source-temp ,lingva-target-temp))))))
+              (list variable-pitch lingva-source-temp lingva-target-temp))))))
 
 (defun lingva--translate-callback (json &optional variable-pitch source target)
   "Display the translation returned in JSON in a buffer.
