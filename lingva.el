@@ -2,11 +2,11 @@
 
 ;; Copyright (C) 2021 marty hiatt
 
-;; Author: marty hiatt <martianhiatus@riseup.net>
+;; Author: marty hiatt <martianhiatus [a t] riseup [d o t] net>
 ;; Homepage: https://codeberg.org/martianh/lingva.el
 ;; Package-Requires: ((emacs "25.1"))
-;; Version: 0.0.1
-;; Keywords: convenience, translation
+;; Version: 0.2
+;; Keywords: convenience, translation, wp, text
 
 ;; This file is not part of GNU Emacs.
 
@@ -27,7 +27,7 @@
 
 ;; Interact with the Lingva.ml API from within Emacs. Lingva.ml provides
 ;; access to Google Translate with no tracking, like Invidious does for
-;; YouTube.
+;; YouTube. See the readme for more information.
 
 ;;; Code:
 
@@ -320,7 +320,6 @@ SOURCE and TARGET and the languages translated to and from."
     (json-read-from-string json-string)))
 
 ;; process the http response:
-
 (defun lingva--response ()
   "Capture response buffer content as string."
   (with-current-buffer (current-buffer)
