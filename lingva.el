@@ -180,6 +180,15 @@ Can be used for either source or target for a lingva query.
   (concat lingva-instance "/api/v1/languages")
   "The URL for a lingva source and target languages list query.")
 
+
+(defvar lingva-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "s") #'lingva-translate)
+    (define-key map (kbd "l") #'lingva-translate)
+    map)
+  "Keymap for lingva results buffer.")
+
+
 (defun lingva--get-languages ()
   "Return the languages supported by the server."
   (let* ((url-request-method "GET")
@@ -292,6 +301,7 @@ SOURCE and TARGET and the languages translated to and from."
         (kill-new json-processed)
         (message "Translation copied to clipboard.")
         (switch-to-buffer-other-window (current-buffer))
+        (lingva-mode)
         (visual-line-mode)
         ;; handle borked filling:
         (when variable-pitch (variable-pitch-mode 1))
@@ -332,6 +342,9 @@ SOURCE and TARGET and the languages translated to and from."
   (let* ((status-line (lingva--response-body "^HTTP/1.*$")))
     (string-match "[0-9][0-9][0-9]" status-line)
     (match-string 0 status-line)))
+
+(define-minor-mode lingva-mode
+  "Minor mode for lingva results buffer.")
 
 (provide 'lingva)
 ;;; lingva.el ends here
