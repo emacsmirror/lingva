@@ -12,7 +12,9 @@ To choose which lingva instance to interact with, customize =lingva-instance=. I
 
 For now the list of supported languages is what is returned by the official [[https://lingva.ml][lingva.ml]] instance's API. It can be obtained/updated by running =lingva-update-lingva-languages=.
 
-For now it is not on MELPA, to install, clone/download, add the directory to your load path, and require.
+** install
+
+=lingva.el= is available on MELPA. If you already have it set up you can call =M-x package-install RET lingva=.
 
 ** similar projects
 
