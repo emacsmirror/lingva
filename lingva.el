@@ -183,8 +183,7 @@ Can be used for either source or target for a lingva query.
 
 (defvar lingva-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "s") #'lingva-translate)
-    (define-key map (kbd "l") #'lingva-translate)
+    (define-key map (kbd "i") #'lingva-translate)
     map)
   "Keymap for lingva results buffer.")
 
