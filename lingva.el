@@ -289,8 +289,7 @@ language different to `lingva-target'."
 SOURCE and TARGET and the languages translated to and from."
   (if (equal 'error (caar json))
       (error "Error - %s" (alist-get 'error json))
-    (with-current-buffer (get-buffer-create
-                          (concat "*lingva-" source "-" target "*"))
+    (with-current-buffer (get-buffer-create "*lingva*")
       (let ((inhibit-read-only t)
             (json-processed
              (replace-regexp-in-string "|" "/" (alist-get
