@@ -1,4 +1,4 @@
-;;; lingva.el --- Access Google Translate via lingva.ml  -*- lexical-binding: t; -*-
+;;; lingva.el --- Access Google Translate without tracking via lingva.ml  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 marty hiatt
 
@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 
-;; Interact with the Lingva.ml API from within Emacs. Lingva.ml provides
+;; Interact with the https://lingva.ml API from within Emacs. Lingva.ml provides
 ;; access to Google Translate with no tracking, like Invidious does for
 ;; YouTube. See the readme for more information.
 
