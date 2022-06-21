@@ -229,7 +229,7 @@ Can be used for either source or target for a lingva query.
    "/" "|"
    (or text
        (read-string
-        (format "Translate (%s): " (or region (current-word) ""))
+        (format "Linva translate (%s): " (or region (current-word) ""))
         nil nil (or region (current-word))))))
 
 (defun lingva--read-lang (source-or-target langs)
