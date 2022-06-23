@@ -18,4 +18,6 @@ For now the list of supported languages is what is returned by the official [[ht
 
 ** similar projects
 
+You may also be interested in [[https://codeberg.org/martianh/libretrans.el][libretrans.el]].
+
 There is a fully-featured Google Translate package for emacs: https://github.com/atykhonov/google-translate. There is also a translation framework that supports Google, Bing, and deepL: https://github.com/lorniu/go-translate. They might be useful if you need to access more aspects of the API, as the lingva version is bare-bones and only returns the translated text. 
