@@ -176,23 +176,21 @@ corresponding codes, see `lingva-languages'."
 Can be used for either source or target for a lingva query.
 \n Can be updated by running `lingva-update-lingva-languages'.")
 
-(defvar lingva-languages-url
-  (concat lingva-instance "/api/v1/languages")
-  "The URL for a lingva source and target languages list query.")
-
-
 (defvar lingva-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "i") #'lingva-translate)
     map)
   "Keymap for lingva results buffer.")
 
+(defun lingva-languages-url ()
+  "Return the URL to lingva languages."
+  (concat lingva-instance "/api/v1/languages"))
 
 (defun lingva--get-languages ()
   "Return the languages supported by the server."
   (let* ((url-request-method "GET")
          (response-buffer (url-retrieve-synchronously
-                           lingva-languages-url t))
+                           (lingva-languages-url) t))
          (json-array-type 'list))
     (with-current-buffer response-buffer
       (goto-char (point-min))
