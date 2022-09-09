@@ -180,6 +180,7 @@ Can be used for either source or target for a lingva query.
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "i") #'lingva-translate)
     (define-key map (kbd "s") #'lingva-translate)
+    (define-key map (kbd "v") #'lingva-paste-to-search)
     map)
   "Keymap for lingva results buffer.")
 
@@ -246,6 +247,11 @@ language or target language."
   (mapcar (lambda (x)
             (cons (cdr x) (car x)))
           langs))
+
+(defun lingva-paste-to-search (&optional arg)
+  "Call `lingva-translate' with the most recent killed text as input."
+  (interactive)
+  (lingva-translate arg (current-kill 0)))
 
 ;;;###autoload
 (defun lingva-translate (&optional arg text variable-pitch)

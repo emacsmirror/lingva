@@ -16,6 +16,11 @@ For now the list of supported languages is what is returned by the official [[ht
 
 =lingva.el= is available on MELPA. If you already have it set up you can call =M-x package-install RET lingva=.
 
+** linvga buffer commands:
+
+- =i= / =s= - prompt for a new lingva search
+- =v= - immediately search using the most recent entry in the kill ring/clipboard.
+
 ** similar projects
 
 You may also be interested in [[https://codeberg.org/martianh/libretrans.el][libretrans.el]].
