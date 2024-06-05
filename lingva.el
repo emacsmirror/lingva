@@ -303,7 +303,8 @@ SOURCE and TARGET and the languages translated to and from."
         (insert json-processed)
         (kill-new json-processed)
         (message "Translation copied to clipboard.")
-        (switch-to-buffer-other-window (current-buffer))
+        (unless (equal (buffer-name (current-buffer)) "*lingva*")
+          (switch-to-buffer-other-window (current-buffer)))
         (lingva-mode)
         (visual-line-mode)
         ;; handle borked filling:
