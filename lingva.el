@@ -249,7 +249,8 @@ language or target language."
           langs))
 
 (defun lingva-paste-to-search (&optional arg)
-  "Call `lingva-translate' with the most recent killed text as input."
+  "Call `lingva-translate' with the most recent killed text as input.
+ARG is a prefix for `lingva-translate'."
   (interactive)
   (lingva-translate arg (current-kill 0)))
 
@@ -263,7 +264,8 @@ prefix ARG, prompt to specify a source language different to
 both a source language different to `lingva-source' and a target
 language different to `lingva-target'."
   (interactive "P")
-  (let* ((url-request-method "GET")
+  (let* ((prev-buf (current-buffer))
+         (url-request-method "GET")
          (lingva-langs-reversed
           (lingva--reverse-langs lingva-languages))
          (lingva-source-temp
@@ -285,39 +287,43 @@ language different to `lingva-target'."
      (lambda (_status)
        (apply #'lingva--translate-callback
               (lingva--translate-process-json)
-              (list variable-pitch lingva-source-temp lingva-target-temp))))))
+              (list variable-pitch lingva-source-temp lingva-target-temp
+                    prev-buf))))))
 
-(defun lingva--translate-callback (json &optional variable-pitch source target)
+(defun lingva--translate-callback (json &optional variable-pitch
+                                        source target prev-buf)
   "Display the translation returned in JSON in a buffer.
 \nWhen VARIABLE-PITCH is non-nil, activate `variable-pitch-mode'.
-SOURCE and TARGET and the languages translated to and from."
+SOURCE and TARGET and the languages translated to and from.
+PREV-BUF is the buffer current when we called lingva.el"
   (if (equal 'error (caar json))
       (error "Error - %s" (alist-get 'error json))
-    (with-current-buffer (get-buffer-create "*lingva*")
-      (let ((inhibit-read-only t)
-            (json-processed
-             (replace-regexp-in-string "|" "/" (alist-get
-                                                'translation json))))
-        (special-mode)
-        (erase-buffer)
-        (insert json-processed)
-        (kill-new json-processed)
-        (message "Translation copied to clipboard.")
-        (unless (equal (buffer-name (current-buffer)) "*lingva*")
-          (switch-to-buffer-other-window (current-buffer)))
-        (lingva-mode)
-        (visual-line-mode)
-        ;; handle borked filling:
-        (when variable-pitch (variable-pitch-mode 1))
-        (setq-local header-line-format
-                    (propertize
-                     (format "Lingva translation from %s to %s:"
-                             (alist-get source lingva-languages
-                                        nil nil #'equal)
-                             (alist-get target lingva-languages
-                                        nil nil #'equal))
-                     'face font-lock-comment-face))
-        (goto-char (point-min))))))
+    (let ((buf (get-buffer-create "*lingva*")))
+      (with-current-buffer buf
+        (let ((inhibit-read-only t)
+              (json-processed
+               (replace-regexp-in-string "|" "/" (alist-get
+                                                  'translation json))))
+          (special-mode)
+          (erase-buffer)
+          (insert json-processed)
+          (kill-new json-processed)
+          (message "Translation copied to clipboard.")
+          (lingva-mode)
+          (visual-line-mode)
+          ;; handle borked filling:
+          (when variable-pitch (variable-pitch-mode 1))
+          (setq-local header-line-format
+                      (propertize
+                       (format "Lingva translation from %s to %s:"
+                               (alist-get source lingva-languages
+                                          nil nil #'equal)
+                               (alist-get target lingva-languages
+                                          nil nil #'equal))
+                       'face font-lock-comment-face))
+          (goto-char (point-min))))
+      (unless (equal (buffer-name prev-buf) "*lingva*")
+        (switch-to-buffer-other-window buf)))))
 
 (defun lingva--translate-process-json ()
   "Parse the JSON from the HTTP response."
