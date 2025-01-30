@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2021 marty hiatt
 
-;; Author: marty hiatt <martianhiatus [a t] riseup [d o t] net>
+;; Author: marty hiatt <mousebot@disroot.org>
 ;; Homepage: https://codeberg.org/martianh/lingva.el
 ;; Package-Requires: ((emacs "25.1"))
 ;; Version: 0.2
