@@ -8,7 +8,7 @@ Called with a single prefix argument, it will prompt the user for a source langu
 
 The translated text appears in a temporary buffer and is also copied to the kill ring/clipboard.
 
-To choose which lingva instance to interact with, customize =lingva-instance=. The old official lingva instance, [[https://lingva.ml][https://lingva.ml]], is currently down, so switch to another one (a list is available here: [[https://github.com/TheDavidDelta/lingva-translate#instances][lingva-translate instances]]).
+To choose which lingva instance to interact with, customize =lingva-instance=. The official lingva instance, [[https://lingva.ml][https://lingva.ml]], is the default, but sometimes it goes down, in which case you can switch to another one (a list is available here: [[https://github.com/TheDavidDelta/lingva-translate#instances][lingva-translate instances]]).
 
 For now the list of supported languages is what is returned by the the API of =lingva-instance=. It can be obtained/updated by running =lingva-update-lingva-languages=.
 
