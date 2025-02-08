@@ -354,7 +354,8 @@ PREV-BUF is the buffer current when we called lingva.el"
     (match-string 0 status-line)))
 
 (define-minor-mode lingva-mode
-  "Minor mode for lingva results buffer.")
+  "Minor mode for lingva results buffer."
+  :lighter "Lingva")
 
 (provide 'lingva)
 ;;; lingva.el ends here
